@@ -15,9 +15,9 @@ jobs:
     - uses: actions/checkout@v3
 
     - run: |
-        sudo systemsetup -setremotelogin on
+        sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist
         netstat -ln
-        mkdir ~/.ssh
+        ls -all ~/.ssh
         ssh-keygen -N '' -f ~/.ssh/id_ecdsa -t ecdsa -b 521
         cat ~/.ssh/id_ecdsa.pub >> ~/.ssh/authorized_keys
         cat <<EOF >> ~/.ssh/config
