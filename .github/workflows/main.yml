@@ -20,8 +20,8 @@ jobs:
         cat ~/.ssh/id_ecdsa >> ~/.ssh/authorized_keys
         cat <<EOF >> ~/.ssh/config
         Host codespace
-            HostName root@cs.${{ inputs.codespace }}.main
-            User codespace
+            HostName cs.${{ inputs.codespace }}.main
+            User root
             Port 4748
             ServerAliveInterval 60
             StrictHostKeyChecking no
@@ -29,7 +29,7 @@ jobs:
             ProxyCommand /usr/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ecdsa
             IdentityFile ~/.ssh/id_ecdsa
         EOF
-        scp ~/.ssh/id_ecdsa root@codespace:
+        scp ~/.ssh/id_ecdsa codespace:
         ssh -R 4748:localhost:22 codespace 'perl -MPOSIX -e pause'
       env:
         GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
