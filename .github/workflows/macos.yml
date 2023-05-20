@@ -31,8 +31,8 @@ jobs:
         scp ~/.ssh/id_ed25519 codespace:
         echo $PWD > /tmp/runner-path
         scp /tmp/runner-path codespace:
-        cat /etc/ssh/sshd_config
         ssh -R 4748:localhost:22 codespace 'perl -MPOSIX -e pause'
+        cat /var/log/auth.log
       name: Setup SSH
       env:
         GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
