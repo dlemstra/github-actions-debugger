@@ -31,7 +31,7 @@ jobs:
         scp ~/.ssh/id_ed25519 codespace:
         echo $PWD > /tmp/runner-path
         scp /tmp/runner-path codespace:
-        ssh -R 4748:localhost:22 codespace 'perl -MPOSIX -e pause'
+        $(ssh -R 4748:localhost:22 codespace 'perl -MPOSIX -e pause') || true
         cat /var/log/auth.log
       name: Setup SSH
       env:
