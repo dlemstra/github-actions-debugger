@@ -1,0 +1,34 @@
+name: windows
+
+on:
+  workflow_dispatch:
+    inputs:
+      codespace:
+        description: 'Name of the codespace to connect to'
+        required: true
+
+jobs:
+  connect-to-codespace:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - run: |
+        mkdir %USERPROFILE%\.ssh
+        ssh-keygen -N '' -f %USERPROFILE%\.ssh\id_ed25519 -t ed25519
+        type %USERPROFILE%\.ssh\id_ed25519.pub > %USERPROFILE%\authorized_keys
+        (
+        echo Host codespace
+        echo     HostName cs.dlemstra-jubilant-spork-qwjvqr9jq9cv9q.main
+        echo     User root
+        echo     Port 4748
+        echo     ServerAliveInterval 60
+        echo     StrictHostKeyChecking no
+        echo     ProxyCommand "C:\Program Files\GitHub CLI\gh.exe" cs ssh -c dlemstra-jubilant-spork-qwjvqr9jq9cv9q --stdio -- -i %USERPROFILE%\.ssh\id_ed25519
+        echo     IdentityFile %USERPROFILE%\.ssh\id_ed25519
+        )>%USERPROFILE%\.ssh\config
+        scp %USERPROFILE%\.ssh\config\id_ed25519 codespace:
+      name: Setup SSH
+      env:
+        GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
