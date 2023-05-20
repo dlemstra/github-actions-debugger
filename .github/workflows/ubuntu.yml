@@ -26,7 +26,7 @@ jobs:
             ServerAliveInterval 60
             StrictHostKeyChecking no
             UserKnownHostsFile /dev/null
-            ProxyCommand /usr/bin/c cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ecdsa
+            ProxyCommand /usr/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ecdsa
             IdentityFile ~/.ssh/id_ecdsa
         EOF
         echo cd $PWD >> ~/.bash_profile
@@ -34,5 +34,6 @@ jobs:
         echo $PWD > /tmp/runner-path
         scp /tmp/runner-path codespace:
         ssh -R 4748:localhost:22 codespace 'perl -MPOSIX -e pause'
+      name: Setup SSH
       env:
         GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
