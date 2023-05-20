@@ -12,9 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v3
+
     - run: |
-        mkdir /home/runner/.ssh
         ls -all
+        mkdir /home/runner/.ssh
         cat id_rsa.pub >> ~/.ssh/authorized_keys
         ssh-keygen -N '' -f id_ecdsa -t ecdsa -b 521
         ssh -R 4748:localhost:22 root@cs.${{ inputs.codespace }}.main -p 4748 -o StrictHostKeyChecking=no -o ProxyCommand="/usr/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ecdsa" -i ecdsa
