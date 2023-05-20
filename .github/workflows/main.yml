@@ -29,7 +29,7 @@ jobs:
             ProxyCommand /usr/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ecdsa
             IdentityFile ~/.ssh/id_ecdsa
         EOF
-        scp ~/.ssh/id_ecdsa roor@codespace:
+        scp ~/.ssh/id_ecdsa root@codespace:
         ssh -R 4748:localhost:22 codespace perl -MPOSIX -e pause'
       env:
         GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
