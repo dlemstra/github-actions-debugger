@@ -1,0 +1,7 @@
+Host runner
+    Hostname localhost
+    Port 4748
+    User runner
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    IdentityFile ~/id_ecdsa

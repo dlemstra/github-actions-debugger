@@ -8,7 +8,6 @@
   "securityOpt": ["apparmor:unconfined"],
   "runArgs": ["--device=/dev/fuse"],
   "postStartCommand": "service ssh start",
-  "forwardPorts": ["4748:22"],
   "customizations": {
     "vscode": {
       "settings": {
