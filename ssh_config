@@ -4,4 +4,4 @@ Host runner
     User runner
     StrictHostKeyChecking no
     UserKnownHostsFile /dev/null
-    IdentityFile ~/id_ecdsa
+    IdentityFile ~/id_ed25519

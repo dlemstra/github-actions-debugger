@@ -15,8 +15,8 @@ jobs:
     - uses: actions/checkout@v3
 
     - run: |
-        ssh-keygen -N '' -f ~/.ssh/id_ecdsa -t ecdsa -b 521
-        cat ~/.ssh/id_ecdsa.pub >> ~/.ssh/authorized_keys
+        ssh-keygen -N '' -f ~/.ssh/id_ed25519 -t ed25519
+        cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys
         cat <<EOF >> ~/.ssh/config
         Host codespace
             HostName cs.${{ inputs.codespace }}.main
@@ -25,12 +25,10 @@ jobs:
             ServerAliveInterval 60
             StrictHostKeyChecking no
             UserKnownHostsFile /dev/null
-            ProxyCommand /usr/local/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ecdsa
-            IdentityFile ~/.ssh/id_ecdsa
+            ProxyCommand /usr/local/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ed25519
+            IdentityFile ~/.ssh/id_ed25519
         EOF
-        whoami
-        scp ~/.ssh/id_ecdsa codespace:
-        scp ~/.ssh/id_ecdsa codespace:
+        scp ~/.ssh/id_ed25519 codespace:
         echo $PWD > /tmp/runner-path
         scp /tmp/runner-path codespace:
         ssh -R 4748:localhost:22 codespace 'perl -MPOSIX -e pause'
