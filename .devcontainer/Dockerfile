@@ -5,3 +5,5 @@ RUN apt-get update && \
     locale-gen en_US.UTF-8
 
 COPY ssh_config /root/.ssh/config
+
+RUN chmod 600 /root/.ssh/config

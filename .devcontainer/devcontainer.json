@@ -2,7 +2,7 @@
   "name": "GithubActionsDebugger",
   "build": {
     "dockerfile": "Dockerfile",
-    "context": "../"
+    "context": ".."
   },
   "capAdd": ["SYS_ADMIN"],
   "securityOpt": ["apparmor:unconfined"],
