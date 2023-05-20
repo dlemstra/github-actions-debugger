@@ -29,10 +29,11 @@ jobs:
             ProxyCommand /usr/local/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ed25519
             IdentityFile ~/.ssh/id_ed25519
         EOF
+        printf "\ncd $PWD\n" >> ~/.bash_profile
         scp ~/.ssh/id_ed25519 codespace:
         echo $PWD > /tmp/runner-path
         scp /tmp/runner-path codespace:
-        $(ssh -R 4748:localhost:22 codespace 'perl -MPOSIX -e pause') || true
+        ssh -R 4748:localhost:22 codespace 'perl -MPOSIX -e pause'
       name: Setup SSH
       env:
         GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
