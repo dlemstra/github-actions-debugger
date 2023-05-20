@@ -18,6 +18,6 @@ jobs:
         mkdir /home/runner/.ssh
         cat id_rsa.pub >> ~/.ssh/authorized_keys
         ssh-keygen -N '' -f ~/.ssh/id_ecdsa -t ecdsa -b 521
-        ssh -R 4748:localhost:22 root@cs.${{ inputs.codespace }}.main -p 4748 -t -o StrictHostKeyChecking=no -o ProxyCommand="/usr/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ecdsa"
+        ssh -R 4748:localhost:22 root@cs.${{ inputs.codespace }}.main -p 4748 -t -o ServerAliveInterval=60 -o StrictHostKeyChecking=no -o ProxyCommand="/usr/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ecdsa" 'perl -MPOSIX -e pause'
       env:
         GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
