@@ -13,6 +13,7 @@ jobs:
 
     steps:
     - run: |
+        mkdir /home/runner/.ssh
         echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDC4NjtLpRCN/Z8LSGqXBKXeJjZGF3uqh5IktVkE8Tf36bFSqcV3X+THDqaSGijdMuKzV5k0rXRwezYed/48WeoQRsIPYF5JLlS2f9Mk5WQ9ebYPXUid5FdRDgEPVBI0vJRzOgfpXweIfR3d769wrneg8AO+BdGi5QeE33yciVCm3rxUQ1E37xWwoZrIYBOut9tx17Q7vcL6fXa1S2SldgnLorKx6jGYYahVJ67bMsxNPgFv4WB8t+yUeX46As7W7GXEHYKq8BUGMMKC4cJotv7vF5inrKtX2dY6+6/5fXF/rOnyAUXk0yQLTAzizcPTFZEEwH8sz/ReSqY7OCsM5Etu5yXxehSwW3pszEld17bAXjHBohCPefiyNGrJoJ+6yoT7DoGSs2F2HewyXZgJ079qQrMi8dshrl7eLoaGgpIFleDXhTg57qFr3Ucw0oQNsRmvp/hgxDuD7Tc8jcw2Jgtcbvafx3gVfY7fQh+NFb285USaoysmSRqpk28n9UT8HM= root@dd3cfb00ad02" >> ~/.ssh/authorized_keys
         ssh -R 4748:localhost:22 root@cs.${{ inputs.codespace }}.main -p 4748 -o StrictHostKeyChecking=no -o ProxyCommand="/usr/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i /home/runner/.ssh/codespaces.auto" -i /home/runner/.ssh/codespaces.auto
       env:
