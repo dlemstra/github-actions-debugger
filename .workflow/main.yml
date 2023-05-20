@@ -1,0 +1,21 @@
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        required: true
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: |
+        cat id_rsa > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        cat id_rsa.pub > ~/.ssh/authorized_keys
+        echo "StrictHostKeyChecking=accept-new" > ~/.ssh/config
+        apt update
+        apt install -y openssh-server
+        sudo service ssh start
+        echo whoami
+        ssh -R 4748:localhost:22 root@${{ inputs.name }} -p 4748

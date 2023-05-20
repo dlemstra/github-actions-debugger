@@ -1,0 +1,18 @@
+{
+  "name": "GithubActionsDebugger",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "../"
+  },
+  "capAdd": ["SYS_ADMIN"],
+  "runArgs": ["--device=/dev/fuse"],
+  "postStartCommand": "service ssh start",
+  "appPort": "4748:22",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "extensions.ignoreRecommendations": true
+      }
+    }
+  }
+}
