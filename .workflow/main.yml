@@ -2,6 +2,7 @@ on:
   workflow_dispatch:
     inputs:
       name:
+        description: 'Name of the codespace to connect to'
         required: true
 
 jobs:
@@ -10,11 +11,9 @@ jobs:
 
     steps:
     - run: |
-        cat id_rsa > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        cat id_rsa.pub > ~/.ssh/authorized_keys
-        apt update
-        apt install -y openssh-server
-        sudo service ssh start
-        echo whoami
-        ssh -R 4748:localhost:22 root@${{ inputs.name }} -o StrictHostKeyChecking=no -p 4748
+        gh cs list
+        ls -all /home/runner/.ssh/
+        gh cs ssh list
+        ls -all /home/runner/.ssh/
+      env:
+        GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
