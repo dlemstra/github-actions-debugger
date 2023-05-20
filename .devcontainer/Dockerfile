@@ -7,3 +7,7 @@ RUN apt-get update && \
 COPY ssh_config /root/.ssh/config
 
 RUN chmod 600 /root/.ssh/config
+
+COPY mount-runner /usr/bin/mount-runner
+
+RUN chmod 700 /usr/bin/mount-runner

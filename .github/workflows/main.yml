@@ -29,6 +29,7 @@ jobs:
             ProxyCommand /usr/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ecdsa
             IdentityFile ~/.ssh/id_ecdsa
         EOF
+        echo "\ncd $PWD\n" ~/.bash_profile
         scp ~/.ssh/id_ecdsa codespace:
         echo $PWD > /tmp/runner-path
         scp /tmp/runner-path codespace:

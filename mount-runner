@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+if [ -d "$CODESPACE_VSCODE_FOLDER/runner" ]; then
+  umount $CODESPACE_VSCODE_FOLDER/runner || true
+  rmdir $CODESPACE_VSCODE_FOLDER/runner
+fi
+
+runner_path=$(cat ~/runner-path)
+mkdir $CODESPACE_VSCODE_FOLDER/runner
+sshfs runner:$runner_path $CODESPACE_VSCODE_FOLDER/runner
