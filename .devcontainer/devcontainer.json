@@ -7,7 +7,7 @@
   "capAdd": ["SYS_ADMIN"],
   "runArgs": ["--device=/dev/fuse"],
   "postStartCommand": "service ssh start",
-  "appPort": "4748:22",
+  "forwardPorts": ["4748:22"],
   "customizations": {
     "vscode": {
       "settings": {
