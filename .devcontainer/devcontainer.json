@@ -5,7 +5,7 @@
     "context": "../"
   },
   "capAdd": ["SYS_ADMIN"],
-  "runArgs": ["--device=/dev/fuse"],
+  "runArgs": ["--device=/dev/fuse --security-opt apparmor:unconfined"],
   "postStartCommand": "service ssh start",
   "forwardPorts": ["4748:22"],
   "customizations": {
