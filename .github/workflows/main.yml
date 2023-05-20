@@ -17,7 +17,7 @@ jobs:
     - run: |
         mkdir /home/runner/.ssh
         ssh-keygen -N '' -f ~/.ssh/id_ecdsa -t ecdsa -b 521
-        cat ~/.ssh/id_ecdsa >> ~/.ssh/authorized_keys
+        cat ~/.ssh/id_ecdsa.pub >> ~/.ssh/authorized_keys
         cat ~/.ssh/authorized_keys
         cat <<EOF >> ~/.ssh/config
         Host codespace
