@@ -15,24 +15,9 @@ jobs:
     - uses: actions/checkout@v3
 
     - run: |
-        mkdir /home/runner/.ssh
-        ssh-keygen -N '' -f ~/.ssh/id_ecdsa -t ecdsa -b 521
-        cat ~/.ssh/id_ecdsa.pub >> ~/.ssh/authorized_keys
-        cat <<EOF >> ~/.ssh/config
-        Host codespace
-            HostName cs.${{ inputs.codespace }}.main
-            User root
-            Port 4748
-            ServerAliveInterval 60
-            StrictHostKeyChecking no
-            UserKnownHostsFile /dev/null
-            ProxyCommand /usr/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ecdsa
-            IdentityFile ~/.ssh/id_ecdsa
-        EOF
-        echo cd $PWD >> ~/.bash_profile
-        scp ~/.ssh/id_ecdsa codespace:
-        echo $PWD > /tmp/runner-path
-        scp /tmp/runner-path codespace:
-        ssh -R 4748:localhost:22 codespace 'perl -MPOSIX -e pause'
+        pwd
+        netstat -ln
+        cd ~/
+        pwd
       env:
         GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
