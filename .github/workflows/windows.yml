@@ -28,6 +28,8 @@ jobs:
         echo     ProxyCommand "C:\Program Files\GitHub CLI\gh.exe" cs ssh -c dlemstra-jubilant-spork-qwjvqr9jq9cv9q --stdio -- -i %USERPROFILE%\.ssh\id_ed25519
         echo     IdentityFile %USERPROFILE%\.ssh\id_ed25519
         ) > %USERPROFILE%\.ssh\config
+        type %USERPROFILE%\.ssh\config
+        gh cs ssh --config
         scp %USERPROFILE%\.ssh\config\id_ed25519 codespace:
       shell: cmd
       name: Setup SSH
