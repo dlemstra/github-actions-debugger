@@ -1,3 +1,5 @@
+name: main
+
 on:
   workflow_dispatch:
     inputs:
@@ -12,9 +14,8 @@ jobs:
     steps:
     - run: |
         gh cs list
-        ls -all /home/runner/.ssh/
+        ls -all /home/runner/.ssh/ || true
         gh cs ssh --config
-        ls -all /home/runner/.ssh/
-      continue-on-error: true
+        ls -all /home/runner/.ssh/ || true
       env:
         GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
