@@ -22,7 +22,6 @@ jobs:
         Host codespace
             HostName cs.${{ inputs.codespace }}.main
             User root
-            Port 4748
             ServerAliveInterval 60
             StrictHostKeyChecking no
             UserKnownHostsFile /dev/null
