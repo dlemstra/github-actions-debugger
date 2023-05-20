@@ -26,7 +26,7 @@ jobs:
             ServerAliveInterval 60
             StrictHostKeyChecking no
             UserKnownHostsFile /dev/null
-            ProxyCommand /usr/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ecdsa
+            ProxyCommand /usr/bin/c cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ecdsa
             IdentityFile ~/.ssh/id_ecdsa
         EOF
         echo cd $PWD >> ~/.bash_profile
