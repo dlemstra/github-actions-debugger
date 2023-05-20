@@ -11,9 +11,9 @@ jobs:
 
     steps:
     - run: |
-        gh cs list || \
-        ls -all /home/runner/.ssh/ || \
-        gh cs ssh list || \
+        gh cs list
+        ls -all /home/runner/.ssh/
+        gh cs ssh --config
         ls -all /home/runner/.ssh/
       env:
         GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
