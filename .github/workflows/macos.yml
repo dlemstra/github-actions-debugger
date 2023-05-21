@@ -33,7 +33,7 @@ jobs:
         echo whoami > /tmp/runner-user
         scp /tmp/runner-user codespace:
         printf "\ncd $PWD\n" >> ~/.bash_profile
-        ssh -R 4748:localhost:22 codespace connect-runner
+        ssh -R 4748:localhost:22 codespace runner-connect
       name: Setup SSH
       env:
         GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
