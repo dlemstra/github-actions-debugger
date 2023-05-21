@@ -6,6 +6,6 @@ if [ -d "$CODESPACE_VSCODE_FOLDER/runner" ]; then
   rmdir $CODESPACE_VSCODE_FOLDER/runner
 fi
 
-runner_path=$(cat ~/runner-path)
+runner_path=$(sed 's/\r//g' ~/runner-path)
 mkdir $CODESPACE_VSCODE_FOLDER/runner
 sshfs runner:$runner_path $CODESPACE_VSCODE_FOLDER/runner
