@@ -15,6 +15,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - run: |
+        chmod 700 ~/.ssh
         gh cs ssh -c ${{ inputs.codespace }} true
         cat ~/.ssh/codespaces.auto.pub >> ~/.ssh/authorized_keys
         cat <<EOF >> ~/.ssh/config
@@ -30,7 +31,7 @@ jobs:
         scp ~/.ssh/codespaces.auto codespace:
         echo $PWD > /tmp/runner-path
         scp /tmp/runner-path codespace:
-        echo whoami > /tmp/runner-user
+        whoami > /tmp/runner-user
         scp /tmp/runner-user codespace:
         printf "\ncd $PWD\n" >> ~/.bash_profile
         ssh -R 4748:localhost:22 codespace runner-connect
