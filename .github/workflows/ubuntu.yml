@@ -12,8 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-
     - run: |
         gh cs ssh -c ${{ inputs.codespace }} true
         cat ~/.ssh/codespaces.auto.pub >> ~/.ssh/authorized_keys

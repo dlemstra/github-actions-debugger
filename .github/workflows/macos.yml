@@ -12,8 +12,6 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v3
-
     - run: |
         chmod 700 ~/.ssh
         gh cs ssh -c ${{ inputs.codespace }} true
