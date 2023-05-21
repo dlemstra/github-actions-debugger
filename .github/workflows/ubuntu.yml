@@ -24,10 +24,10 @@ jobs:
             ServerAliveInterval 60
             StrictHostKeyChecking no
             UserKnownHostsFile /dev/null
-            ProxyCommand /usr/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/odespaces.auto
-            IdentityFile ~/.ssh/odespaces.auto
+            ProxyCommand /usr/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/codespaces.auto
+            IdentityFile ~/.ssh/codespaces.auto
         EOF
-        scp ~/.ssh/id_ed25519 codespace:
+        scp ~/.ssh/codespaces.auto codespace:
         echo $PWD > /tmp/runner-path
         scp /tmp/runner-path codespace:
         whoami > /tmp/runner-user
