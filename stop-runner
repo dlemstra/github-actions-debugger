@@ -2,3 +2,7 @@
 set -e
 
 killall perl
+
+rm ~/codespaces.auto
+rm ~/runner-user
+rm ~/runner-user
