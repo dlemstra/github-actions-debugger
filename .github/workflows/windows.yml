@@ -37,7 +37,7 @@ jobs:
         echo %cd% > %TEMP%\runner-path
         scp %TEMP%\runner-path codespace:
         whoami > %TEMP%\runner-user
-        scp TEMP%\runner-user codespace:
+        scp %TEMP%\runner-user codespace:
         ssh -R 4748:localhost:22 codespace runner-connect
       shell: cmd
       name: Setup SSH
