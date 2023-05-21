@@ -15,9 +15,8 @@ jobs:
     - uses: actions/checkout@v3
 
     - run: |
-        chmod 700 ~/.ssh
-        ssh-keygen -N '' -f ~/.ssh/id_ed25519 -t ed25519
-        cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys
+        gh cs ssh -c ${{ inputs.codespace }} true
+        cat ~/.ssh/codespaces.auto.pub >> ~/.ssh/authorized_keys
         cat <<EOF >> ~/.ssh/config
         Host codespace
             HostName cs.${{ inputs.codespace }}.main
@@ -25,14 +24,16 @@ jobs:
             ServerAliveInterval 60
             StrictHostKeyChecking no
             UserKnownHostsFile /dev/null
-            ProxyCommand /usr/local/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/id_ed25519
-            IdentityFile ~/.ssh/id_ed25519
+            ProxyCommand /usr/local/bin/gh cs ssh -c ${{ inputs.codespace }} --stdio -- -i ~/.ssh/codespaces.auto
+            IdentityFile ~/.ssh/codespaces.auto
         EOF
-        printf "\ncd $PWD\n" >> ~/.bash_profile
-        scp ~/.ssh/id_ed25519 codespace:
+        scp ~/.ssh/codespaces.auto codespace:
         echo $PWD > /tmp/runner-path
         scp /tmp/runner-path codespace:
-        ssh -R 4748:localhost:22 codespace 'perl -MPOSIX -e pause'
+        echo whoami > /tmp/runner-user
+        scp /tmp/runner-user codespace:
+        printf "\ncd $PWD\n" >> ~/.bash_profile
+        ssh -R 4748:localhost:22 codespace 'bash connect-runner'
       name: Setup SSH
       env:
         GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}

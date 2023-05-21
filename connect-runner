@@ -1,0 +1,15 @@
+#!/bin/bash
+
+chmod 700 ~/codespaces.auto
+
+cat <<EOF > ~/.ssh/config
+Host runner
+    Hostname localhost
+    Port 4748
+    User $(cat ~/runner-user)
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    IdentityFile ~/codespaces.auto
+EOF
+
+perl -MPOSIX -e pause
