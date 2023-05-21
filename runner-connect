@@ -12,4 +12,6 @@ Host runner
     IdentityFile ~/codespaces.auto
 EOF
 
+chmod 600 /root/.ssh/config
+
 perl -MPOSIX -e pause

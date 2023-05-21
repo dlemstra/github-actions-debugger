@@ -4,10 +4,6 @@ RUN apt-get update && \
     apt-get install -y sshfs openssh-server vim locales && \
     locale-gen en_US.UTF-8
 
-COPY ssh_config /root/.ssh/config
-
-RUN chmod 600 /root/.ssh/config
-
 COPY mount-runner /usr/bin/mount-runner
 
 RUN chmod 700 /usr/bin/mount-runner
