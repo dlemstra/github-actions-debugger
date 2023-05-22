@@ -31,4 +31,6 @@ tail -f /dev/null
 
 umount runner
 
+rmdir runner
+
 exit 0
