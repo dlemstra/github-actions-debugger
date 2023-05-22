@@ -3,6 +3,12 @@ set -e
 
 killall tail
 
+cd $(find /workspaces -mindepth 1 -type d -not -name '.*' -print -quit)
+
+umount runner
+
+rmdir runner
+
 rm ~/codespaces.auto
 rm ~/runner-path
 rm ~/runner-user

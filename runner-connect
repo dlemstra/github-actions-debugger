@@ -29,8 +29,4 @@ echo "Connected and mounted $runner_path from runner at $PWD/runner."
 
 tail -f /dev/null || true
 
-umount runner
-
-rmdir runner
-
 exit 0
