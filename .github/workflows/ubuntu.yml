@@ -10,6 +10,8 @@ on:
 jobs:
   connect-to-codespace:
     runs-on: ubuntu-latest
+    permissions:
+        codespaces: write
 
     steps:
     - run: |
@@ -33,7 +35,5 @@ jobs:
         printf "\ncd $PWD\n" >> ~/.bash_profile
         ssh -R 4748:localhost:22 codespace runner-connect
       name: Setup SSH
-      permissions:
-        codespaces: write
       env:
         GH_TOKEN: ${{ github.token }}
