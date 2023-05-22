@@ -1,7 +1,11 @@
 FROM alpine:3
 
 RUN apk update && \
-    apk add openssh-server openrc sshfs vim
+    apk add openssh openrc sshfs vim
+
+RUN rm -rf /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_dsa_key && \
+    ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa && \
+    ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa
 
 COPY mount-runner /usr/bin/mount-runner
 
