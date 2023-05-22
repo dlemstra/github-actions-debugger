@@ -11,7 +11,7 @@ jobs:
   connect-to-codespace:
     runs-on: ubuntu-latest
     permissions:
-        codespaces: write
+      codespaces: write
 
     steps:
     - run: |
