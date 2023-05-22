@@ -7,6 +7,7 @@
   "capAdd": ["SYS_ADMIN"],
   "securityOpt": ["apparmor:unconfined"],
   "runArgs": ["--device=/dev/fuse"],
+  "postStartCommand": "rc-service sshd start",
   "customizations": {
     "vscode": {
       "settings": {

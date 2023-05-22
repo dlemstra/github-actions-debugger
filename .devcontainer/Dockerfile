@@ -1,8 +1,7 @@
 FROM alpine:3
 
 RUN apk update && \
-    apk add openssh-server openrc sshfs vim && \
-    rc-update add sshd default
+    apk add openssh-server openrc sshfs vim
 
 COPY mount-runner /usr/bin/mount-runner
 
