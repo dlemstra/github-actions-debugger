@@ -27,7 +27,7 @@ sshfs runner:$runner_path runner
 
 echo "Connected and mounted $runner_path from runner at $PWD/runner."
 
-tail -f /dev/null
+tail -f /dev/null || true
 
 umount runner
 
