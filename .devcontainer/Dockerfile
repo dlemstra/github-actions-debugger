@@ -5,7 +5,8 @@ RUN apk update && \
 
 RUN rm -rf /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_dsa_key && \
     ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa && \
-    ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa
+    ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa && \
+    sed 's/AllowTcpForwarding no/AllowTcpForwarding yes/g' /etc/ssh/sshd_config > /etc/ssh/sshd_config
 
 COPY mount-runner /usr/bin/mount-runner
 
