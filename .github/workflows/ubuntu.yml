@@ -34,4 +34,4 @@ jobs:
         ssh -R 4748:localhost:22 codespace runner-connect
       name: Setup SSH
       env:
-        GH_TOKEN: ${{ secrets.TOKEN_FOR_CODESPACES }}
+        GH_TOKEN: ${{ github.token }}
