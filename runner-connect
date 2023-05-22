@@ -14,4 +14,4 @@ EOF
 
 chmod 600 /root/.ssh/config
 
-perl -MPOSIX -e pause
+tail -f /dev/null

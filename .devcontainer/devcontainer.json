@@ -7,7 +7,6 @@
   "capAdd": ["SYS_ADMIN"],
   "securityOpt": ["apparmor:unconfined"],
   "runArgs": ["--device=/dev/fuse"],
-  "postStartCommand": "service ssh start",
   "customizations": {
     "vscode": {
       "settings": {

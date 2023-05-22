@@ -1,8 +1,8 @@
-FROM ubuntu:22.04
+FROM alpine:3
 
-RUN apt-get update && \
-    apt-get install -y sshfs openssh-server vim locales psmisc && \
-    locale-gen en_US.UTF-8
+RUN apk update && \
+    apk add openssh-server openrc sshfs vim && \
+    rc-update add sshd default
 
 COPY mount-runner /usr/bin/mount-runner
 
