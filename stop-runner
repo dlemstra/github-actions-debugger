@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
-killall perl
+killall tail
 
 rm ~/codespaces.auto
 rm ~/runner-path

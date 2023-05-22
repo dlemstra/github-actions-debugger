@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 chmod 600 ~/codespaces.auto
 

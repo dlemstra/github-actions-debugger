@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 if [ -d "$CODESPACE_VSCODE_FOLDER/runner" ]; then
