@@ -30,6 +30,17 @@ async function startWindowsSshServer() {
     return true;
 }
 
+function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string, idFilePub: string) {
+    let source = path.join(sshFolder, idFilePub);
+    let destination = path.join(sshFolder, 'authorized_keys');
+    fs.copyFileSync(source, destination);
+
+    if (platform === Platform.Windows && process.env.ALLUSERSPROFILE !== undefined) {
+        source = destination;
+        destination = path.join(process.env.ALLUSERSPROFILE, 'ssh', 'administrators_authorized_keys');
+    }
+}
+
 async function whoami() {
     let output = '';
     const options = {
@@ -89,6 +100,8 @@ async function run() {
 
     const configPath = path.join(sshFolder, 'config');
     const idFile = path.join(sshFolder, 'codespaces.auto');
+    addPublicKeyToAuthorizedKeys(platform, sshFolder, 'codespaces.auto.pub');
+
     fs.writeFileSync(configPath, `Host codespace
   HostName cs.${codespace}.main
   User root
