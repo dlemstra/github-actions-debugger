@@ -33,15 +33,13 @@ async function startWindowsSshServer() {
 }
 
 async function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string, idFilePub: string) {
-    if (platform !== Platform.Windows) {
-        let source = path.join(sshFolder, idFilePub);
-        let destination = path.join(sshFolder, 'authorized_keys');
-        await fs.copyFile(source, destination);
-        return;
-    }
+    let source = path.join(sshFolder, idFilePub);
+    let destination = path.join(sshFolder, 'authorized_keys');
+    await fs.copyFile(source, destination);
 
-    await executeCommand('type', ['%USERPROFILE%\.ssh\codespaces.auto.pub', '>', '%USERPROFILE%\.ssh\authorized_keys']);
-    await executeCommand('move', ['/y', '%USERPROFILE%\.ssh\authorized_keys', '%ALLUSERSPROFILE%\ssh\administrators_authorized_keys']);
+    if (platform === Platform.Windows) {
+        await executeCommand('icacls', [destination]);
+    }
 }
 
 async function whoami() {
