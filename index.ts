@@ -42,7 +42,7 @@ async function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string,
 
     if (platform === Platform.Windows) {
         await executeCommand('icacls', [destination]);
-        await executeCommand('icacls', [destination, '/remove', 'NT AUTHORITY\Authenticated Users:(I)(RX)']);
+        await executeCommand('icacls', [destination, '/remove', 'NT AUTHORITY\\Authenticated Users:(I)(RX)']);
         await executeCommand('icacls', [destination]);
     }
 }
