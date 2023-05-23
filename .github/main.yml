@@ -1,0 +1,30 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+name: main
+jobs:
+  run_action:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Use node 18
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18
+
+      - run: npm install
+
+      - run: npm run lint
+
+      - run: npm run build
+
+      - name: Run the action
+        uses: ./
+        with:
+          codepsace: 'dlemstra-jubilant-spork-qwjvqr9jq9cv9q'
+          token: '${{ secrets.TOKEN_FOR_CODESPACES }}'
