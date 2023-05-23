@@ -15,3 +15,7 @@ RUN chmod 700 /usr/bin/stop-runner
 COPY debugger/runner-connect /usr/bin/runner-connect
 
 RUN chmod 700 /usr/bin/runner-connect
+
+COPY debugger/shell /usr/bin/shell
+
+RUN chmod 700 /usr/bin/shell
