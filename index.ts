@@ -42,7 +42,7 @@ async function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string,
 
     if (platform === Platform.Windows) {
         await executeCommand('icacls', [destination]);
-        await exec.exec('icacls', [destination, '/remove', 'Everyone:(RX)']);
+        await executeCommand('icacls', [destination, '/remove', 'NT AUTHORITY\Authenticated Users:(I)(RX)']);
         await executeCommand('icacls', [destination]);
     }
 }
@@ -51,10 +51,10 @@ async function whoami() {
     let output = '';
     const options = {
         listeners: {
-        stdout: (data: Buffer) => {
-            output += data.toString();
-        },
-        },
+            stdout: (data: Buffer) => {
+                output += data.toString();
+            }
+        }
     };
     await exec.exec('whoami', [], options);
     return output.trim();
@@ -87,6 +87,7 @@ async function run() {
     const env = process.env;
     env['GH_TOKEN'] = token;
 
+    core.info('Checking if the codespace is running');
     if (await executeCommand('gh', ['cs', 'ssh', '-c', codespace, 'true']) !== 0) {
         core.error('Failed to connect to codespace');
         return;
