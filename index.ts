@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as process from 'process';
 import * as path from 'path';
@@ -30,12 +30,17 @@ async function startWindowsSshServer() {
     return true;
 }
 
-function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string, idFilePub: string) {
+async function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string, idFilePub: string) {
     let source = path.join(sshFolder, idFilePub);
     let destination = path.join(sshFolder, 'authorized_keys');
-    fs.copyFileSync(source, destination);
+    await fs.copyFile(source, destination);
 
-    if (platform === Platform.Windows && process.env.ALLUSERSPROFILE !== undefined) {
+    if (platform !== Platform.Windows) {
+        await fs.chmod(destination, 0o700);
+        return
+    }
+
+    if (process.env.ALLUSERSPROFILE !== undefined) {
         source = destination;
         destination = path.join(process.env.ALLUSERSPROFILE, 'ssh', 'administrators_authorized_keys');
     }
@@ -64,9 +69,9 @@ async function copyFileToCodespace(file: string) {
 }
 
 async function createAndCopyFileToCodespace(file: string, content: string) {
-    fs.writeFileSync(file, content);
+    await fs.writeFile(file, content);
     const result = await copyFileToCodespace(file);
-    fs.unlinkSync(file);
+    await fs.unlink(file);
     return result;
 }
 
@@ -100,12 +105,12 @@ async function run() {
 
     const configPath = path.join(sshFolder, 'config');
     const idFile = path.join(sshFolder, 'codespaces.auto');
-    addPublicKeyToAuthorizedKeys(platform, sshFolder, 'codespaces.auto.pub');
+    await addPublicKeyToAuthorizedKeys(platform, sshFolder, 'codespaces.auto.pub');
 
     await executeCommand('ls', ['-all', sshFolder]);
     await executeCommand('cat', [path.join(sshFolder, 'authorized_keys')]);
 
-    fs.writeFileSync(configPath, `Host codespace
+    await fs.writeFile(configPath, `Host codespace
   HostName cs.${codespace}.main
   User root
   ServerAliveInterval 60
