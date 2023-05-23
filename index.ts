@@ -20,12 +20,27 @@ async function executeCommand(command: string, args: string[]) {
     return await exec.exec(command, args, options);
 }
 
-async function copyFile(file: string) {
-    core.info(`Copying '${file}' key to the codespace`);
-    if (await executeCommand('scp', [file, 'codespace:']) !== 0) {
-        core.info(`Failed to copy '${file}' key to the codespace`);
-        return;
-    }
+async function whoami() {
+    let output = '';
+    const options = {
+        listeners: {
+        stdout: (data: Buffer) => {
+            output += data.toString();
+        },
+        },
+    };
+    await exec.exec('whoami', [], options);
+    return output.trim();
+}
+
+async function startWindowsSshServer() {
+    if (await executeCommand('powershell', ['-Command', 'Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0']) !== 0)
+        return false;
+
+    if (await executeCommand('powershell', ['-Command', 'Start-Service sshd']) !== 0)
+        return false;
+
+    return true;
 }
 
 async function run() {
@@ -39,17 +54,20 @@ async function run() {
     const env = process.env;
     env['GH_TOKEN'] = token;
 
-    const platform = os.platform();
-
-    core.info(`platform: ${platform}`);
     if (await executeCommand('gh', ['cs', 'ssh', '-c', codespace, 'true']) !== 0) {
-        core.info('Failed to connect to codespace');
+        core.error('Failed to connect to codespace');
         return;
     }
 
+    const platform = os.platform();
     const sshFolder = path.join(os.homedir(), '.ssh');
     if (platform === Platform.Macos && await executeCommand('chmod', ['700', sshFolder]) !== 0) {
-        core.info('Failed to set the correct permissions for ~/.ssh');
+        core.error('Failed to set the correct permissions for ~/.ssh');
+        return;
+    }
+
+    if (platform === Platform.Windows && await startWindowsSshServer() !== true) {
+        core.error('Failed to start the Windows SSH server');
         return;
     }
 
@@ -64,12 +82,25 @@ async function run() {
   ProxyCommand gh cs ssh -c ${codespace} --stdio -- -i ${idFile}
   IdentityFile ${idFile}`);
 
-    await copyFile(configPath);
-
-    if (await executeCommand('ssh', ['codespace', `echo ${process.cwd()} > runner-path`]) !== 0) {
-        core.info('Failed to store runner path on the codespace');
+    core.info(`Copying '${idFile}' key to the codespace`);
+    if (await executeCommand('scp', [idFile, 'codespace:']) !== 0) {
+        core.error(`Failed to copy '${idFile}' key to the codespace`);
         return;
     }
+
+    const runnerPath = process.cwd();
+    if (await executeCommand('ssh', ['codespace', `"echo ${runnerPath} > runner-path"`]) !== 0) {
+        core.error('Failed to store runner path on the codespace');
+        return;
+    }
+
+    const runnerUser = await whoami();
+    if (await executeCommand('ssh', ['codespace', `"echo ${runnerUser} > runner-user"`]) !== 0) {
+        core.error('Failed to store runner path on the codespace');
+        return;
+    }
+
+    await executeCommand('ssh', ['-R', '4748:localhost:22', 'codespace', 'runner-connect']);
 }
 
 run();
