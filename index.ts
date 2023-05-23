@@ -10,12 +10,12 @@ async function run() {
         return;
     }
 
+    const env = process.env;
+    env['GH_TOKEN'] = token;
+
     const options = {
         silent: false,
         ignoreReturnCode: true,
-        env: {
-            'GH_TOKEN': token
-        }
     };
 
     core.info(`platform: ${process.platform}`);
