@@ -11,7 +11,11 @@
   "customizations": {
     "vscode": {
       "settings": {
-        "extensions.ignoreRecommendations": true
+        "extensions.ignoreRecommendations": true,
+        "files.exclude": {
+          "**/": true,
+          "runner/*": false
+        }
       }
     }
   }

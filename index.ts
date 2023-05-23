@@ -38,8 +38,7 @@ async function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string,
 
     if (platform === Platform.Windows) {
         const administrators_authorized_keys = path.join(process.env.ALLUSERSPROFILE || '', 'ssh', 'administrators_authorized_keys');
-
-        await executeCommand('move', ['/y', authorized_keys, administrators_authorized_keys]);
+        fs.rename(authorized_keys, administrators_authorized_keys);
         await executeCommand('icacls', [administrators_authorized_keys]);
     }
 }
