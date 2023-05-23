@@ -20,6 +20,14 @@ async function executeCommand(command: string, args: string[]) {
     return await exec.exec(command, args, options);
 }
 
+async function copyFile(file: string) {
+    core.info(`Copying '${file}' key to the codespace`);
+    if (await executeCommand('scp', [file, 'codespace:']) !== 0) {
+        core.info(`Failed to copy '${file}' key to the codespace`);
+        return;
+    }
+}
+
 async function run() {
     const token = core.getInput('token');
     const codespace = core.getInput('codespace');
@@ -56,8 +64,10 @@ async function run() {
   ProxyCommand gh cs ssh -c ${codespace} --stdio -- -i ${idFile}
   IdentityFile ${idFile}`);
 
-    if (await executeCommand('scp', [idFile, 'codespace:']) !== 0) {
-        core.info('Failed to copy the ssh key to the codespace');
+    await copyFile(configPath);
+
+    if (await executeCommand('ssh', ['codespace', `echo ${process.cwd()} > runner-path`]) !== 0) {
+        core.info('Failed to store runner path on the codespace');
         return;
     }
 }
