@@ -1,7 +1,7 @@
 {
   "name": "github-actions-debugger",
   "version": "1.0.0",
-  "description": "Sign files with a code signing certificate.",
+  "description": "Debug GitHub Sctions in a Codespace",
   "main": "index.js",
   "scripts": {
     "build": "tsc && ncc build lib/index.js -m",

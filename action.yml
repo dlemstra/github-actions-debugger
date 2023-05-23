@@ -1,5 +1,5 @@
 name: 'Github actions debugger'
-description: 'Debug your Github actions.'
+description: 'Debug GitHub Sctions in a Codespace'
 branding:
   icon: 'bug'
   color: 'green'

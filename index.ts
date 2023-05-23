@@ -35,12 +35,7 @@ async function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string,
     let destination = path.join(sshFolder, 'authorized_keys');
     await fs.copyFile(source, destination);
 
-    if (platform !== Platform.Windows) {
-        await fs.chmod(destination, 0o700);
-        return
-    }
-
-    if (process.env.ALLUSERSPROFILE !== undefined) {
+    if (platform === Platform.Windows && process.env.ALLUSERSPROFILE !== undefined) {
         source = destination;
         destination = path.join(process.env.ALLUSERSPROFILE, 'ssh', 'administrators_authorized_keys');
     }
@@ -94,7 +89,7 @@ async function run() {
     const platform = os.platform();
     const sshFolder = path.join(os.homedir(), '.ssh');
     if (platform === Platform.Macos && await executeCommand('chmod', ['700', sshFolder]) !== 0) {
-        core.error('Failed to set the correct permissions for ~/.ssh');
+        core.error(`Failed to set the correct permissions for ${sshFolder}`);
         return;
     }
 
@@ -118,6 +113,9 @@ async function run() {
   UserKnownHostsFile /dev/null
   ProxyCommand gh cs ssh -c ${codespace} --stdio -- -i ${idFile}
   IdentityFile ${idFile}`);
+
+    if (await copyFileToCodespace(idFile) !== true)
+        return;
 
     const runnerPath = process.cwd();
     if (await createAndCopyFileToCodespace('runner-path', runnerPath) !== true)

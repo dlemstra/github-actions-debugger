@@ -5,7 +5,7 @@ killall tail
 
 cd $(find /workspaces -mindepth 1 -type d -not -name '.*' -print -quit)
 
-umount runner
+umount runner || true
 
 rmdir runner
 
