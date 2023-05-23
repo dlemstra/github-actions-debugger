@@ -1,6 +1,24 @@
+import * as fs from 'fs';
+import * as os from 'os';
 import * as process from 'process';
+import * as path from 'path';
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
+
+enum Platform {
+    Windows = 'win32',
+    Linux = 'linux',
+    Macos = 'darwin',
+}
+
+async function executeCommand(command: string, args: string[]) {
+    const options = {
+        silent: false,
+        ignoreReturnCode: true,
+    };
+
+    return await exec.exec(command, args, options);
+}
 
 async function run() {
     const token = core.getInput('token');
@@ -13,19 +31,35 @@ async function run() {
     const env = process.env;
     env['GH_TOKEN'] = token;
 
-    const options = {
-        silent: false,
-        ignoreReturnCode: true,
-    };
+    const platform = os.platform();
 
-    core.info(`platform: ${process.platform}`);
-    const exitCode = await exec.exec('gh', ['cs', 'ssh', '-c', `${codespace}`, 'true'], options);
-    if (exitCode !== 0) {
+    core.info(`platform: ${platform}`);
+    if (await executeCommand('gh', ['cs', 'ssh', '-c', codespace, 'true']) !== 0) {
         core.info('Failed to connect to codespace');
         return;
     }
 
-    core.info(`gh cs ssh -c ${codespace} true exited with code ${exitCode}`);
+    const sshFolder = path.join(os.homedir(), '.ssh');
+    if (platform === Platform.Macos && await executeCommand('chmod', ['700', sshFolder]) !== 0) {
+        core.info('Failed to set the correct permissions for ~/.ssh');
+        return;
+    }
+
+    const configPath = path.join(sshFolder, 'config');
+    const idFile = path.join(sshFolder, 'codespaces.auto');
+    fs.writeFileSync(configPath, `Host codespace
+  HostName cs.${codespace}.main
+  User root
+  ServerAliveInterval 60
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+  ProxyCommand gh cs ssh -c ${codespace} --stdio -- -i ${idFile}
+  IdentityFile ${idFile}`);
+
+    if (await executeCommand('scp', [idFile, 'codespace:']) !== 0) {
+        core.info('Failed to copy the ssh key to the codespace');
+        return;
+    }
 }
 
 run();
