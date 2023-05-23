@@ -20,6 +20,16 @@ async function executeCommand(command: string, args: string[]) {
     return await exec.exec(command, args, options);
 }
 
+async function startWindowsSshServer() {
+    if (await executeCommand('powershell', ['-Command', 'Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0']) !== 0)
+        return false;
+
+    if (await executeCommand('powershell', ['-Command', 'Start-Service sshd']) !== 0)
+        return false;
+
+    return true;
+}
+
 async function whoami() {
     let output = '';
     const options = {
@@ -33,14 +43,20 @@ async function whoami() {
     return output.trim();
 }
 
-async function startWindowsSshServer() {
-    if (await executeCommand('powershell', ['-Command', 'Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0']) !== 0)
+async function copyFile(file: string) {
+    core.info(`Copying '${file}' key to the codespace`);
+    if (await executeCommand('scp', [file, 'codespace:']) !== 0) {
+        core.error(`Failed to copy '${file}' key to the codespace`);
         return false;
-
-    if (await executeCommand('powershell', ['-Command', 'Start-Service sshd']) !== 0)
-        return false;
-
+    }
     return true;
+}
+
+async function createAndCopyFile(file: string, content: string) {
+    fs.writeFileSync(file, content);
+    const result = await copyFile(file);
+    fs.unlinkSync(file);
+    return result;
 }
 
 async function run() {
@@ -82,23 +98,13 @@ async function run() {
   ProxyCommand gh cs ssh -c ${codespace} --stdio -- -i ${idFile}
   IdentityFile ${idFile}`);
 
-    core.info(`Copying '${idFile}' key to the codespace`);
-    if (await executeCommand('scp', [idFile, 'codespace:']) !== 0) {
-        core.error(`Failed to copy '${idFile}' key to the codespace`);
-        return;
-    }
-
     const runnerPath = process.cwd();
-    if (await executeCommand('ssh', ['codespace', `"echo ${runnerPath} > runner-path"`]) !== 0) {
-        core.error('Failed to store runner path on the codespace');
+    if (await createAndCopyFile('runner-path', runnerPath) !== true)
         return;
-    }
 
     const runnerUser = await whoami();
-    if (await executeCommand('ssh', ['codespace', `"echo ${runnerUser} > runner-user"`]) !== 0) {
-        core.error('Failed to store runner path on the codespace');
+    if (await createAndCopyFile('runner-user', runnerUser) !== true)
         return;
-    }
 
     await executeCommand('ssh', ['-R', '4748:localhost:22', 'codespace', 'runner-connect']);
 }
