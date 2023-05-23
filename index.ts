@@ -10,9 +10,20 @@ async function run() {
         return;
     }
 
-    core.exportVariable('GH_TOKEN', token);
+    const options = {
+        silent: false,
+        ignoreReturnCode: true,
+        env: {
+            'GH_TOKEN': token
+        }
+    };
+
     core.info(`platform: ${process.platform}`);
-    const exitCode = await exec.exec('gh', ['cs', 'ssh', `-c ${codespace}`, 'true'], { silent: false, ignoreReturnCode: true });
+    const exitCode = await exec.exec('gh', ['cs', 'ssh', '-c', `${codespace}`, 'true'], options);
+    if (exitCode !== 0) {
+        core.info('Failed to connect to codespace');
+    }
+
     core.info(`gh cs ssh -c ${codespace} true exited with code ${exitCode}`);
 }
 

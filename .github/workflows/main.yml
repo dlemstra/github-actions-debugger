@@ -17,11 +17,11 @@ jobs:
         with:
           node-version: 16
 
-      # - run: npm install
+      - run: npm install
 
       # - run: npm run lint
 
-      # - run: npm run build
+      - run: npm run build
 
       - name: Run the action
         uses: ./
