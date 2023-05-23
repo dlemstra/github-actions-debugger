@@ -21,9 +21,11 @@ async function executeCommand(command: string, args: string[]) {
 }
 
 async function startWindowsSshServer() {
+    core.info('Enabling the Windows SSH server');
     if (await executeCommand('powershell', ['-Command', 'Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0']) !== 0)
         return false;
 
+    core.info('Starting the Windows SSH server');
     if (await executeCommand('powershell', ['-Command', 'Start-Service sshd']) !== 0)
         return false;
 
@@ -31,14 +33,15 @@ async function startWindowsSshServer() {
 }
 
 async function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string, idFilePub: string) {
-    let source = path.join(sshFolder, idFilePub);
-    let destination = path.join(sshFolder, 'authorized_keys');
-    await fs.copyFile(source, destination);
-
-    if (platform === Platform.Windows && process.env.ALLUSERSPROFILE !== undefined) {
-        source = destination;
-        destination = path.join(process.env.ALLUSERSPROFILE, 'ssh', 'administrators_authorized_keys');
+    if (platform !== Platform.Windows) {
+        let source = path.join(sshFolder, idFilePub);
+        let destination = path.join(sshFolder, 'authorized_keys');
+        await fs.copyFile(source, destination);
+        return;
     }
+
+    await executeCommand('type', ['%USERPROFILE%\.ssh\codespaces.auto.pub', '>', '%USERPROFILE%\.ssh\authorized_keys']);
+    await executeCommand('move', ['/y', '%USERPROFILE%\.ssh\authorized_keys', '%ALLUSERSPROFILE%\ssh\administrators_authorized_keys']);
 }
 
 async function whoami() {
