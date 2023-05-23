@@ -54,7 +54,7 @@ async function whoami() {
     return output.trim();
 }
 
-async function copyFile(file: string) {
+async function copyFileToCodespace(file: string) {
     core.info(`Copying '${file}' key to the codespace`);
     if (await executeCommand('scp', [file, 'codespace:']) !== 0) {
         core.error(`Failed to copy '${file}' key to the codespace`);
@@ -63,9 +63,9 @@ async function copyFile(file: string) {
     return true;
 }
 
-async function createAndCopyFile(file: string, content: string) {
+async function createAndCopyFileToCodespace(file: string, content: string) {
     fs.writeFileSync(file, content);
-    const result = await copyFile(file);
+    const result = await copyFileToCodespace(file);
     fs.unlinkSync(file);
     return result;
 }
@@ -112,11 +112,11 @@ async function run() {
   IdentityFile ${idFile}`);
 
     const runnerPath = process.cwd();
-    if (await createAndCopyFile('runner-path', runnerPath) !== true)
+    if (await createAndCopyFileToCodespace('runner-path', runnerPath) !== true)
         return;
 
     const runnerUser = await whoami();
-    if (await createAndCopyFile('runner-user', runnerUser) !== true)
+    if (await createAndCopyFileToCodespace('runner-user', runnerUser) !== true)
         return;
 
     await executeCommand('ssh', ['-R', '4748:localhost:22', 'codespace', 'runner-connect']);
