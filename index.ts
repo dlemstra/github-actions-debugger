@@ -55,9 +55,9 @@ async function whoami() {
 }
 
 async function copyFileToCodespace(file: string) {
-    core.info(`Copying '${file}' key to the codespace`);
+    core.info(`Copying '${file}' to the codespace`);
     if (await executeCommand('scp', [file, 'codespace:']) !== 0) {
-        core.error(`Failed to copy '${file}' key to the codespace`);
+        core.error(`Failed to copy '${file}' to the codespace`);
         return false;
     }
     return true;
@@ -101,9 +101,6 @@ async function run() {
     const configPath = path.join(sshFolder, 'config');
     const idFile = path.join(sshFolder, 'codespaces.auto');
     await addPublicKeyToAuthorizedKeys(platform, sshFolder, 'codespaces.auto.pub');
-
-    await executeCommand('ls', ['-all', sshFolder]);
-    await executeCommand('cat', [path.join(sshFolder, 'authorized_keys')]);
 
     await fs.writeFile(configPath, `Host codespace
   HostName cs.${codespace}.main
