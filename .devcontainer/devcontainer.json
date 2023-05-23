@@ -13,8 +13,8 @@
       "settings": {
         "extensions.ignoreRecommendations": true,
         "files.exclude": {
-          "**/": true,
-          "runner/*": false
+          "**": true,
+          "!./runner": false
         }
       }
     }
