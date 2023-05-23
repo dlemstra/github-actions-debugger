@@ -20,4 +20,4 @@ COPY debugger/shell /usr/bin/shell
 
 RUN chmod 700 /usr/bin/shell
 
-COPY debugger/gitnore /gitnore
+COPY debugger/gitignore /gitignore
