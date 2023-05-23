@@ -12,9 +12,7 @@
     "vscode": {
       "settings": {
         "extensions.ignoreRecommendations": true,
-        "files.exclude": {
-          "#explorer.excludeGitIgnore#": true
-        }
+        "explorer.excludeGitIgnore": true
       }
     }
   }
