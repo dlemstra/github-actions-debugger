@@ -22,6 +22,7 @@ async function run() {
     const exitCode = await exec.exec('gh', ['cs', 'ssh', '-c', `${codespace}`, 'true'], options);
     if (exitCode !== 0) {
         core.info('Failed to connect to codespace');
+        return;
     }
 
     core.info(`gh cs ssh -c ${codespace} true exited with code ${exitCode}`);
