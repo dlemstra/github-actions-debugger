@@ -7,7 +7,6 @@ import * as exec from '@actions/exec';
 
 enum Platform {
     Windows = 'win32',
-    Linux = 'linux',
     Macos = 'darwin',
 }
 
@@ -34,16 +33,14 @@ async function startWindowsSshServer() {
 
 async function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string, idFilePub: string) {
     const source = path.join(sshFolder, idFilePub);
-    let destination = path.join(sshFolder, 'authorized_keys');
-    if (platform === Platform.Windows)
-        destination = path.join(process.env.ALLUSERSPROFILE || '', 'ssh', 'administrators_authorized_keys');
-
-    await fs.copyFile(source, destination);
+    const authorized_keys = path.join(sshFolder, 'authorized_keys');
+    await fs.copyFile(source, authorized_keys);
 
     if (platform === Platform.Windows) {
-        await executeCommand('icacls', [destination]);
-        await executeCommand('icacls', [destination, '/remove', 'Authenticated Users:(I)(RX)']);
-        await executeCommand('icacls', [destination]);
+        const administrators_authorized_keys = path.join(process.env.ALLUSERSPROFILE || '', 'ssh', 'administrators_authorized_keys');
+
+        await executeCommand('move', ['/y', authorized_keys, administrators_authorized_keys]);
+        await executeCommand('icacls', [administrators_authorized_keys]);
     }
 }
 
