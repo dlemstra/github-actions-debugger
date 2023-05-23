@@ -7,14 +7,13 @@
   "capAdd": ["SYS_ADMIN"],
   "securityOpt": ["apparmor:unconfined"],
   "runArgs": ["--device=/dev/fuse"],
-  "postStartCommand": "nohup sh -c '/usr/sbin/sshd -D &' > /dev/null",
+  "postStartCommand": "mv /gitnore $CODESPACE_VSCODE_FOLDER/.gitignore && nohup sh -c '/usr/sbin/sshd -D &' > /dev/null",
   "customizations": {
     "vscode": {
       "settings": {
         "extensions.ignoreRecommendations": true,
         "files.exclude": {
-          "**": true,
-          "!./runner": false
+          "#explorer.excludeGitIgnore#": true
         }
       }
     }
