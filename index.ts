@@ -102,6 +102,9 @@ async function run() {
     const idFile = path.join(sshFolder, 'codespaces.auto');
     addPublicKeyToAuthorizedKeys(platform, sshFolder, 'codespaces.auto.pub');
 
+    await executeCommand('ls', ['-all', sshFolder]);
+    await executeCommand('cat', [path.join(sshFolder, 'authorized_keys')]);
+
     fs.writeFileSync(configPath, `Host codespace
   HostName cs.${codespace}.main
   User root
