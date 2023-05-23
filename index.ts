@@ -35,12 +35,14 @@ async function startWindowsSshServer() {
 async function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string, idFilePub: string) {
     const source = path.join(sshFolder, idFilePub);
     let destination = path.join(sshFolder, 'authorized_keys');
+    if (platform === Platform.Windows)
+        destination = path.join(process.env.ALLUSERSPROFILE || '', 'ssh', 'administrators_authorized_keys');
+
     await fs.copyFile(source, destination);
 
     if (platform === Platform.Windows) {
         await executeCommand('icacls', [destination]);
-        destination = path.join(process.env.ALLUSERSPROFILE || '', 'ssh', 'administrators_authorized_keys');
-        await fs.rename(source, destination);
+        await exec.exec('icacls', [destination, '/remove', 'Everyone:(RX)']);
         await executeCommand('icacls', [destination]);
     }
 }
@@ -126,6 +128,7 @@ async function run() {
     if (await createAndCopyFileToCodespace('runner-user', runnerUser) !== true)
         return;
 
+    core.info('Connecting to the codespace');
     await executeCommand('ssh', ['-R', '4748:localhost:22', 'codespace', 'runner-connect']);
 }
 
