@@ -1,7 +1,7 @@
 FROM alpine:3
 
 RUN apk update && \
-    apk add openssh openrc sshfs vim
+    apk add git openssh openrc sshfs vim
 
 RUN rm -rf /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_dsa_key && \
     ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa && \
