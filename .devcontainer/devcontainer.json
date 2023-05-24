@@ -11,9 +11,14 @@
   "customizations": {
     "vscode": {
       "settings": {
+        "extensions.allowInsiders": true,
         "extensions.ignoreRecommendations": true,
         "explorer.excludeGitIgnore": true
-      }
+      },
+      "extensions": [
+        "GitHub.copilot-chat",
+        "GitHub.copilot-nightly"
+      ]
     }
   }
 }
