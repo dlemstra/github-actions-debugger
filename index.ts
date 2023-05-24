@@ -49,7 +49,8 @@ async function whoami() {
             stdout: (data: Buffer) => {
                 output += data.toString();
             }
-        }
+        },
+        silent: true
     };
     await exec.exec('whoami', [], options);
     return output.trim();
