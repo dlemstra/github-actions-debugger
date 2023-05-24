@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "githttps://github.com/dlemstra/github-actions-debugger"
+    "url": "github:dlemstra/github-actions-debugger"
   },
   "keywords": [],
   "author": "",
