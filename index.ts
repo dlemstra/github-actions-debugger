@@ -10,22 +10,33 @@ enum Platform {
     Macos = 'darwin',
 }
 
+class ProgramResult {
+    constructor(public exitCode: number, public output: string) { }
+}
+
 async function executeCommand(command: string, args: string[]) {
+    let output = '';
     const options = {
+        listeners: {
+            stdout: (data: Buffer) => {
+                output += data.toString();
+            }
+        },
         silent: true,
         ignoreReturnCode: true,
     };
 
-    return await exec.exec(command, args, options);
+    const exitCode = await exec.exec(command, args, options);
+    return new ProgramResult(exitCode, output);
 }
 
 async function startWindowsSshServer() {
     core.info('Enabling the Windows SSH server');
-    if (await executeCommand('powershell', ['-Command', 'Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0']) !== 0)
+    if ((await executeCommand('powershell', ['-Command', 'Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0'])).exitCode !== 0)
         return false;
 
     core.info('Starting the Windows SSH server');
-    if (await executeCommand('powershell', ['-Command', 'Start-Service sshd']) !== 0)
+    if ((await executeCommand('powershell', ['-Command', 'Start-Service sshd'])).exitCode !== 0)
         return false;
 
     return true;
@@ -58,7 +69,7 @@ async function whoami() {
 
 async function copyFileToCodespace(file: string) {
     core.info(`Copying '${file}' to the codespace`);
-    if (await executeCommand('scp', [file, 'codespace:']) !== 0) {
+    if ((await executeCommand('scp', [file, 'codespace:'])).exitCode !== 0) {
         core.error(`Failed to copy '${file}' to the codespace`);
         return false;
     }
@@ -84,14 +95,15 @@ async function run() {
     env['GH_TOKEN'] = token;
 
     core.info('Checking if the codespace is running');
-    if (await executeCommand('gh', ['cs', 'ssh', '-c', codespace, 'true']) !== 0) {
-        core.error('Failed to connect to codespace');
+    const result = await executeCommand('gh', ['cs', 'ssh', '-c', codespace, 'true']);
+    if (result.exitCode !== 0) {
+        core.error(`Failed to connect to codespace:\n${result.output}`);
         return;
     }
 
     const platform = os.platform();
     const sshFolder = path.join(os.homedir(), '.ssh');
-    if (platform === Platform.Macos && await executeCommand('chmod', ['700', sshFolder]) !== 0) {
+    if (platform === Platform.Macos && (await executeCommand('chmod', ['700', sshFolder])).exitCode !== 0) {
         core.error(`Failed to set the correct permissions for ${sshFolder}`);
         return;
     }
