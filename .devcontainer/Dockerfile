@@ -21,3 +21,5 @@ COPY debugger/shell /usr/bin/shell
 RUN chmod 700 /usr/bin/shell
 
 COPY debugger/gitignore /gitignore
+
+COPY debugger/postStartCommand.sh /postStartCommand
