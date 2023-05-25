@@ -1,3 +1,11 @@
 if test -e /gitignore; then
     mv /gitignore .gitignore
 fi
+
+echo -e "\033[35mWelcome to the \033[32mGitHub Actions Debugger\033[35m!"
+echo
+echo "When the runner has connected to the codespace a message will be shown"
+echo -e "that an application running on port \033[32m4748\033[35m is available."
+echo
+echo -e "To get a shell inside that runner, type '\033[32mshell\033[35m'.\033[0m"
+echo -e "To stop that runner, type '\033[32mstop-runner\033[35m'.\033[0m"
