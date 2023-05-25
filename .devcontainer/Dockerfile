@@ -20,10 +20,12 @@ COPY debugger/shell /usr/bin/shell
 
 RUN chmod 700 /usr/bin/shell
 
+COPY debugger/postStartCommand.sh /postStartCommand
+
+RUN chmod 700 /postStartCommand
+
 COPY debugger/.rc /root/.rc
 
 COPY debugger/gitignore /gitignore
-
-COPY debugger/postStartCommand.sh /postStartCommand
 
 ENV ENV=/root/.rc
