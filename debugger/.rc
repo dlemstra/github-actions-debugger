@@ -1,0 +1,3 @@
+if test -e /gitignore; then
+    mv /gitignore $CODESPACE_VSCODE_FOLDER/.gitignore
+fi
