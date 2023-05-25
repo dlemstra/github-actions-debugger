@@ -11,15 +11,19 @@ enum Platform {
 }
 
 class ProgramResult {
-    constructor(public exitCode: number, public output: string) { }
+    constructor(public exitCode: number, public output: string, public error: string) { }
 }
 
 async function executeCommand(command: string, args: string[]) {
     let output = '';
+    let error = '';
     const options = {
         listeners: {
             stdout: (data: Buffer) => {
                 output += data.toString();
+            },
+            stderr: (data: Buffer) => {
+                error += data.toString();
             }
         },
         silent: true,
@@ -27,7 +31,7 @@ async function executeCommand(command: string, args: string[]) {
     };
 
     const exitCode = await exec.exec(command, args, options);
-    return new ProgramResult(exitCode, output);
+    return new ProgramResult(exitCode, output, error);
 }
 
 async function startWindowsSshServer() {
@@ -51,20 +55,6 @@ async function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string,
         const administrators_authorized_keys = path.join(process.env.ALLUSERSPROFILE || '', 'ssh', 'administrators_authorized_keys');
         fs.rename(authorized_keys, administrators_authorized_keys);
     }
-}
-
-async function whoami() {
-    let output = '';
-    const options = {
-        listeners: {
-            stdout: (data: Buffer) => {
-                output += data.toString();
-            }
-        },
-        silent: true
-    };
-    await exec.exec('whoami', [], options);
-    return output.trim();
 }
 
 async function copyFileToCodespace(file: string) {
@@ -95,9 +85,9 @@ async function run() {
     env['GH_TOKEN'] = token;
 
     core.info('Checking if the codespace is running');
-    const result = await executeCommand('gh', ['cs', 'ssh', '-c', codespace, 'true']);
+    let result = await executeCommand('gh', ['cs', 'ssh', '-c', codespace, 'true']);
     if (result.exitCode !== 0) {
-        core.error(`Failed to connect to codespace:\n${result.output}`);
+        core.error(`Failed to connect to codespace:\n${result.error}`);
         return;
     }
 
@@ -133,8 +123,8 @@ async function run() {
     if (await createAndCopyFileToCodespace('runner-path', runnerPath) !== true)
         return;
 
-    const runnerUser = await whoami();
-    if (await createAndCopyFileToCodespace('runner-user', runnerUser) !== true)
+    result = await executeCommand('whoami', []);
+    if (await createAndCopyFileToCodespace('runner-user', result.output) !== true)
         return;
 
     core.info('Connecting to the codespace');
