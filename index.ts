@@ -57,32 +57,22 @@ async function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string,
     }
 }
 
-async function copyFileToCodespace(file: string) {
-    core.info(`Copying '${file}' to the codespace`);
-    if ((await executeCommand('scp', [file, 'codespace:'])).exitCode !== 0) {
-        core.error(`Failed to copy '${file}' to the codespace`);
-        return false;
-    }
-    return true;
-}
-
-async function createAndCopyFileToCodespace(file: string, content: string) {
-    await fs.writeFile(file, content);
-    const result = await copyFileToCodespace(file);
-    await fs.unlink(file);
-    return result;
-}
-
 async function createInfoAndCopyToCodespace(idFile: string, runnerPath: string, user: string) {
-    const runnerIdentity = await fs.readFile(idFile, 'utf8');
+    const runnerIdentity = (await fs.readFile(idFile, 'utf8')).trim();
     const file = 'runner-info';
     await fs.writeFile(file, `export RUNNER_IDENTITY=$(cat <<EOF
 ${runnerIdentity}
 EOF
 )
 export RUNNER_PATH=${runnerPath}
-export RUNNER_USER=${user}`);
-    return await copyFileToCodespace(file);
+export RUNNER_USER=${user}
+`);
+    core.info(`Copying '${file}' to the codespace`);
+    if ((await executeCommand('scp', [file, 'codespace:'])).exitCode !== 0) {
+        core.error(`Failed to copy '${file}' to the codespace`);
+        return false;
+    }
+    return true;
 }
 
 async function run() {
@@ -97,9 +87,9 @@ async function run() {
     env['GH_TOKEN'] = token;
 
     core.info('Checking if the codespace is running');
-    let result = await executeCommand('gh', ['cs', 'ssh', '-c', codespace, 'true']);
-    if (result.exitCode !== 0) {
-        core.error(`Failed to connect to codespace:\n${result.error}`);
+    let commandResult = await executeCommand('gh', ['cs', 'ssh', '-c', codespace, 'true']);
+    if (commandResult.exitCode !== 0) {
+        core.error(`Failed to connect to codespace:\n${commandResult.error}`);
         return;
     }
 
@@ -128,22 +118,16 @@ async function run() {
   ProxyCommand gh cs ssh -c ${codespace} --stdio -- -i ${idFile}
   IdentityFile ${idFile}`);
 
-    if (await copyFileToCodespace(idFile) !== true)
-        return;
-
-    const runnerPath = process.cwd();
-    if (await createAndCopyFileToCodespace('runner-path', runnerPath) !== true)
-        return;
-
-    result = await executeCommand('whoami', []);
-    const user = result.output.trim();
-    if (await createAndCopyFileToCodespace('runner-user', user) !== true)
-        return;
-
-    if (await createInfoAndCopyToCodespace(idFile, runnerPath, user) !== true) {
-        core.error('Unable to copy info to the codespace');
+    commandResult = await executeCommand('whoami', []);
+    if (commandResult.exitCode  !== 0) {
+        core.error(`Failed to get the current user:\n${commandResult.error}`);
         return;
     }
+
+    const user = commandResult.output.trim();
+    const runnerPath = process.cwd();
+    if (await createInfoAndCopyToCodespace(idFile, runnerPath, user) !== true)
+        return;
 
     core.info('Connecting to the codespace');
     await executeCommand('ssh', ['-R', '4748:localhost:22', 'codespace', 'runner-connect']);

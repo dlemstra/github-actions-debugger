@@ -1,5 +1,9 @@
 #!/bin/sh
 
+. ~/runner-info
+
+echo "$RUNNER_IDENTITY" > ~/codespaces.auto
+
 chmod 600 ~/codespaces.auto
 
 cat <<EOF > ~/.ssh/config
@@ -21,12 +25,9 @@ if [ -d "runner" ]; then
   rmdir runner
 fi
 
-runner_path=$(sed 's/\r//g' ~/runner-path)
 mkdir runner
-sshfs runner:$runner_path runner
+sshfs runner:$RUNNER_PATH runner
 
-echo "Connected and mounted $runner_path from runner at $PWD/runner."
+echo "Connected and mounted $RUNNER_PATH from runner at $PWD/runner."
 
 tail -f /dev/null || true
-
-exit 0

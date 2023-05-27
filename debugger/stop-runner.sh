@@ -11,5 +11,4 @@ rmdir runner
 
 rm ~/.ssh/authorized_keys
 rm ~/codespaces.auto
-rm ~/runner-path
-rm ~/runner-user
+rm ~/runner-info
