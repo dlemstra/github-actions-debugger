@@ -73,6 +73,18 @@ async function createAndCopyFileToCodespace(file: string, content: string) {
     return result;
 }
 
+async function createInfoAndCopyToCodespace(idFile: string, runnerPath: string, user: string) {
+    const runnerIdentity = await fs.readFile(idFile, 'utf8');
+    const file = 'runner-info';
+    await fs.writeFile(file, `export RUNNER_IDENTITY=$(cat <<EOF
+${runnerIdentity}
+EOF
+)
+export RUNNER_PATH=${runnerPath}
+export RUNNER_USER=${user}`);
+    return await copyFileToCodespace(file);
+}
+
 async function run() {
     const token = core.getInput('token');
     const codespace = core.getInput('codespace');
@@ -124,8 +136,14 @@ async function run() {
         return;
 
     result = await executeCommand('whoami', []);
-    if (await createAndCopyFileToCodespace('runner-user', result.output) !== true)
+    const user = result.output.trim();
+    if (await createAndCopyFileToCodespace('runner-user', user) !== true)
         return;
+
+    if (await createInfoAndCopyToCodespace(idFile, runnerPath, user) !== true) {
+        core.error('Unable to copy info to the codespace');
+        return;
+    }
 
     core.info('Connecting to the codespace');
     await executeCommand('ssh', ['-R', '4748:localhost:22', 'codespace', 'runner-connect']);
