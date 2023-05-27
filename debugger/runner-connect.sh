@@ -10,7 +10,7 @@ cat <<EOF > ~/.ssh/config
 Host runner
     Hostname localhost
     Port 4748
-    User $(cat ~/runner-user)
+    User $RUNNER_USER
     StrictHostKeyChecking no
     UserKnownHostsFile /dev/null
     IdentityFile ~/codespaces.auto
