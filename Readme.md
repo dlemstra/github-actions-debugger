@@ -6,4 +6,4 @@ This project contains a proof of concept of a GitHub action that can be used to 
 - [ubuntu](https://github.com/dlemstra/github-actions-debugger-demo/blob/main/.github/workflows/ubuntu.yml)
 - [windows](https://github.com/dlemstra/github-actions-debugger-demo/blob/main/.github/workflows/windows.yml)
 
-To use this demo you will need to start a [GitHub runner codespace](https://github.com/dlemstra/runner-codespace). And the name that the action needs is this part of the url: https://[codespace].github.dev/.
+To use this demo you will need to start a [runner codespace](https://github.com/dlemstra/runner-codespace). And the name that the action needs is this part of the url: https://[codespace].github.dev/.
