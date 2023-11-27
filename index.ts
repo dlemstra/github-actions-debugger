@@ -64,8 +64,8 @@ async function createInfoAndCopyToCodespace(idFile: string, runnerPath: string, 
 ${runnerIdentity}
 EOF
 )
-export RUNNER_PATH=${runnerPath}
-export RUNNER_USER=${user}
+export RUNNER_PATH=${runnerPath.replace(/\\/g, '\\\\')}
+export RUNNER_USER=${user.replace(/\\/g, '\\\\')}
 `);
     core.info(`Copying '${file}' to the codespace`);
     if ((await executeCommand('scp', [file, 'codespace:'])).exitCode !== 0) {
