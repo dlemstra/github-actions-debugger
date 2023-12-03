@@ -9,5 +9,5 @@ inputs:
   token:
     description: 'The personal access token that has access to codespaces.'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
