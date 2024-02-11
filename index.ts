@@ -57,15 +57,16 @@ async function addPublicKeyToAuthorizedKeys(platform: string, sshFolder: string,
     }
 }
 
-async function createInfoAndCopyToCodespace(idFile: string, runnerPath: string, user: string) {
+async function createInfoAndCopyToCodespace(idFile: string, user: string, runnerPath: string, runnerShell: string) {
     const runnerIdentity = (await fs.readFile(idFile, 'utf8')).trim();
     const file = 'runner-info';
     await fs.writeFile(file, `export RUNNER_IDENTITY=$(cat <<EOF
 ${runnerIdentity}
 EOF
 )
-export RUNNER_PATH=${runnerPath.replace(/\\/g, '\\\\')}
-export RUNNER_USER=${user.replace(/\\/g, '\\\\')}
+export RUNNER_USER="${user.replace(/\\/g, '\\\\')}"
+export RUNNER_PATH="${runnerPath.replace(/\\/g, '\\\\')}"
+export RUNNER_SHELL="${runnerShell.replace(/\\/g, '\\\\')}"
 `);
     core.info(`Copying '${file}' to the codespace`);
     if ((await executeCommand('scp', [file, 'codespace:'])).exitCode !== 0) {
@@ -73,6 +74,39 @@ export RUNNER_USER=${user.replace(/\\/g, '\\\\')}
         return false;
     }
     return true;
+}
+
+async function createRunnerShellScript(platform: NodeJS.Platform) {
+    core.info(`Creating script that sets the environment variables and starts the shell in the codespace`);
+
+    const folder = process.env.RUNNER_TEMP;
+    const file = `${folder}/${platform === Platform.Windows ? 'runner-shell.cmd' : 'runner-shell'}`;
+    const filteredEnv = Object.entries(process.env)
+        .filter(([key]) => key.startsWith('GITHUB_') || key.startsWith('RUNNER_'))
+        .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+
+    let script = '';
+    if (platform === Platform.Windows)
+        script += '@echo off\r\n';
+
+    for (const [key, value] of filteredEnv) {
+        if (platform === Platform.Windows)
+            script += `set ${key}=${value}\r\n`;
+        else
+            script += `export ${key}="${value}"\n`;
+    }
+
+    if (platform === Platform.Windows)
+        script += 'cd /D %GITHUB_WORKSPACE%\r\ncmd\r\n';
+    else
+        script += 'cd $GITHUB_WORKSPACE\nbash -l\n';
+
+    await fs.writeFile(file, script);
+
+    if (platform !== Platform.Windows)
+        await executeCommand('chmod', ['700', file]);
+
+    return platform === Platform.Windows ? `cmd /C ${file}` : file;
 }
 
 async function run() {
@@ -126,7 +160,8 @@ async function run() {
 
     const user = commandResult.output.trim();
     const runnerPath = process.cwd();
-    if (await createInfoAndCopyToCodespace(idFile, runnerPath, user) !== true)
+    const runnerShell = await createRunnerShellScript(platform);
+    if (await createInfoAndCopyToCodespace(idFile, user, runnerPath, runnerShell) !== true)
         return;
 
     core.info('Connecting to the codespace');
