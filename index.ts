@@ -69,11 +69,14 @@ export RUNNER_PATH="${runnerPath.replace(/\\/g, '\\\\')}"
 export RUNNER_SHELL="${runnerShell.replace(/\\/g, '\\\\')}"
 `);
     core.info(`Copying '${file}' to the codespace`);
-    if ((await executeCommand('scp', [file, 'codespace:'])).exitCode !== 0) {
+
+    const success = (await executeCommand('scp', [file, 'codespace:'])).exitCode === 0;
+    await fs.unlink(file);
+
+    if (success === false)
         core.error(`Failed to copy '${file}' to the codespace`);
-        return false;
-    }
-    return true;
+
+    return success;
 }
 
 async function createRunnerShellScript(platform: NodeJS.Platform) {
