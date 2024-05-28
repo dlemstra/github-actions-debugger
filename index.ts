@@ -14,6 +14,10 @@ class ProgramResult {
     constructor(public exitCode: number, public output: string, public error: string) { }
 }
 
+interface ICodespace {
+    name: string;
+}
+
 async function executeCommand(command: string, args: string[]) {
     let output = '';
     let error = '';
@@ -112,16 +116,41 @@ async function createRunnerShellScript(platform: NodeJS.Platform) {
     return platform === Platform.Windows ? `cmd /C ${file}` : file;
 }
 
+async function findRunnerCodespace() {
+    const commandResult = await executeCommand('gh', ['cs', 'list', '--json', 'name,repository', '-q', 'map(select(.repository | contains("/runner-codespace")))']);
+    if (commandResult.exitCode !== 0) {
+        core.info(`Failed to find codespace:\n${commandResult.error}`);
+        return '';
+    }
+
+    const codespaces = <ICodespace[]>JSON.parse(commandResult.output);
+    if (codespaces.length === 0)
+        return '';
+
+    const firstCodespace = codespaces[0].name;
+    core.info(`Found codespace: ${firstCodespace}`);
+
+    return firstCodespace;
+}
+
 async function run() {
     const token = core.getInput('token');
-    const codespace = core.getInput('codespace');
-    if (codespace === '' || token === '') {
-        core.info('No codespace provided, skipping');
+    if (token === '') {
+        core.info('No token provided, skipping');
         return;
     }
 
     const env = process.env;
     env['GH_TOKEN'] = token;
+
+    let codespace = core.getInput('codespace');
+    if (codespace === '') {
+        codespace = await findRunnerCodespace();
+        if (codespace === '') {
+            core.info('Unable to find a codespace that uses the "runner-codespace" repository, skipping');
+            return;
+        }
+    }
 
     core.info('Checking if the codespace is running');
     let commandResult = await executeCommand('gh', ['cs', 'ssh', '-c', codespace, 'true']);
