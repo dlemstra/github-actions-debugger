@@ -4,10 +4,11 @@ branding:
   icon: 'bug'
   color: 'green'
 inputs:
-  codespace:
-    description: 'The name of the codespace.'
   token:
     description: 'The personal access token that has access to codespaces.'
+    required: true
+  codespace:
+    description: 'The name of the codespace.'
 runs:
   using: 'node20'
   main: 'dist/index.js'
