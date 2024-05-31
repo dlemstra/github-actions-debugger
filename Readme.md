@@ -53,7 +53,7 @@ jobs:
 
 Once the action has been triggered and the job has failed, the action will try to find the codespace that is using the `runner codespace` project. And when it has found the codespace it will connect to it and allow a shell to be opened on the runner that is running the action.
 
-```shell
+```console
 /workspaces/runner-codespace # shell
 Warning: Permanently added '[localhost]:4748' (ED25519) to the list of known hosts.
 
