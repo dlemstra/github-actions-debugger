@@ -1,6 +1,6 @@
 # GitHub Actions Debugger
 
-This action that can be used to debug a GitHub action on a hosted runner. This action needs to used be together with the [runner codespace](https://github.com/dlemstra/runner-codespace) project. This project will start a codespace where this action connects to and allows a shell access to the runner that is running the action. And it also allows you to edit the files on the runner through a codespace.
+This action that can be used to debug a GitHub action on a hosted runner. This action needs to used be together with the [runner-codespace](https://github.com/dlemstra/runner-codespace) project. This project will start a codespace where this action connects to and allows a shell access to the runner that is running the action. And it also allows you to edit the files on the runner through a codespace.
 
 ## Inputs
 
@@ -14,7 +14,7 @@ token: ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ### `codespace`
 
-**Optional** The name of the codespace that should be used. If not specified the action will try to find the codespace that is using the `runner codespace` project. The name of the codespace can be found in the URL of the codespace (`https://[NAME].github.dev/`).
+**Optional** The name of the codespace that should be used. If not specified the action will try to find the codespace that is using the `runner-codespace` project. The name of the codespace can be found in the URL of the codespace (`https://[NAME].github.dev/`).
 
 ```yaml
 codespace: laughing-cod-jxvr564g44cpx9r
