@@ -9,14 +9,23 @@ This action that can be used to debug a GitHub action on a hosted runner. This a
 **Required** The personal access token that has access to codespaces.
 
 ```yaml
+# GitHub token with the following permissions:
+# - Full control of codespaces (codespace).
+
 token: ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 ### `codespace`
 
-**Optional** The name of the codespace that should be used. If not specified the action will try to find the codespace that is using the `runner-codespace` project. The name of the codespace can be found in the URL of the codespace (`https://[NAME].github.dev/`).
+**Optional** The name of the codespace that should be used.
+
+If not specified the action will try to find the codespace that is using the `runner-codespace` project. The name of the codespace can be found in the URL of the codespace (`https://[NAME].github.dev/`).
 
 ```yaml
+# The name of the codespace can be found in the URL of # the codespace
+# (`https://[NAME].github.dev/`). If not specified the action will try
+# to find the codespace that is using the runner-codespace project.
+
 codespace: laughing-cod-jxvr564g44cpx9r
 ```
 
