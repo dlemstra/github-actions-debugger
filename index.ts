@@ -89,7 +89,7 @@ async function createRunnerShellScript(platform: NodeJS.Platform) {
     const folder = process.env.RUNNER_TEMP;
     const file = `${folder}/${platform === Platform.Windows ? 'runner-shell.cmd' : 'runner-shell'}`;
     const filteredEnv = Object.entries(process.env)
-        .filter(([key]) => key.startsWith('GITHUB_') || key.startsWith('RUNNER_'))
+        .filter(([key]) => key.startsWith('GITHUB_') || key.startsWith('RUNNER_') || key == 'PATH')
         .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
 
     let script = '';
