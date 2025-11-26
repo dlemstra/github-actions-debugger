@@ -4,6 +4,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 name: main
 jobs:
   run_action:
