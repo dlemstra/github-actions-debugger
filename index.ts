@@ -38,6 +38,25 @@ async function executeCommand(command: string, args: string[]) {
     return new ProgramResult(exitCode, output, error);
 }
 
+async function correctPermissions(path: string, expectedMode: number): Promise<boolean> {
+    try {
+        const stats = await fs.stat(path);
+        const mode = stats.mode & 0o777;
+        if (mode === expectedMode)
+            return true;
+
+        if ((await executeCommand('chmod', [expectedMode.toString(8), path])).exitCode !== 0) {
+            core.error(`Failed to set correct permissions for ${path}`);
+            return false;
+        }
+    } catch (error) {
+        core.error(`Failed to correct permissions for ${path}: ${error}`);
+        return false;
+    }
+
+    return true;
+}
+
 async function startWindowsSshServer() {
     core.info('Enabling the Windows SSH server');
     if ((await executeCommand('powershell', ['-Command', 'Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0'])).exitCode !== 0)
@@ -160,21 +179,34 @@ async function run() {
     }
 
     const platform = os.platform();
-    const sshFolder = path.join(os.homedir(), '.ssh');
-    if (platform === Platform.Macos && (await executeCommand('chmod', ['700', sshFolder])).exitCode !== 0) {
-        core.error(`Failed to set the correct permissions for ${sshFolder}`);
-        return;
-    }
-
     if (platform === Platform.Windows && await startWindowsSshServer() !== true) {
         core.error('Failed to start the Windows SSH server');
         return;
     }
 
-    const configPath = path.join(sshFolder, 'config');
+    const homeDir = os.homedir();
+    const sshFolder = path.join(homeDir, '.ssh');
     const idFile = path.join(sshFolder, 'codespaces.auto');
     await addPublicKeyToAuthorizedKeys(platform, sshFolder, 'codespaces.auto.pub');
 
+    if (platform !== Platform.Windows) {
+        if (!await correctPermissions(homeDir, 0o755) ||
+            !await correctPermissions(sshFolder, 0o700) ||
+            !await correctPermissions(path.join(sshFolder, 'authorized_keys'), 0o600))
+            return;
+    }
+
+    if (platform !== Platform.Windows) {
+        let result = await executeCommand('ls', ['-all', sshFolder]);
+        if (result.exitCode === 0)
+            core.info(`SSH folder contents:\n${result.output}`);
+
+        result = await executeCommand('cat', [path.join(sshFolder, 'authorized_keys')]);
+        if (result.exitCode === 0)
+            core.info(`authorized_keys contents:\n${result.output}`);
+    }
+
+    const configPath = path.join(sshFolder, 'config');
     await fs.writeFile(configPath, `Host codespace
   HostName cs.${codespace}.main
   User root
