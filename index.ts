@@ -161,6 +161,7 @@ async function run() {
 
     const platform = os.platform();
     const sshFolder = path.join(os.homedir(), '.ssh');
+    await fs.mkdir(sshFolder, { mode: 0o700, recursive: true });
     if (platform === Platform.Macos && (await executeCommand('chmod', ['700', sshFolder])).exitCode !== 0) {
         core.error(`Failed to set the correct permissions for ${sshFolder}`);
         return;
