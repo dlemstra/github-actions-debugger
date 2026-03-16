@@ -201,16 +201,6 @@ async function run() {
             return;
     }
 
-    if (platform !== Platform.Windows) {
-        let result = await executeCommand('ls', ['-all', sshFolder]);
-        if (result.exitCode === 0)
-            core.info(`SSH folder contents:\n${result.output}`);
-
-        result = await executeCommand('cat', [path.join(sshFolder, 'authorized_keys')]);
-        if (result.exitCode === 0)
-            core.info(`authorized_keys contents:\n${result.output}`);
-    }
-
     const configPath = path.join(sshFolder, 'config');
     await fs.writeFile(configPath, `Host codespace
   HostName cs.${codespace}.main
