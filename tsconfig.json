@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2018",
-    "module": "commonjs",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "outDir": "lib",
     "declaration": true,
     "removeComments": true,

@@ -2,9 +2,9 @@
   "name": "github-actions-debugger",
   "version": "1.0.0",
   "description": "Debug GitHub Sctions in a Codespace",
-  "main": "index.js",
+  "main": "dist/index.mjs",
   "scripts": {
-    "build": "tsc && ncc build lib/index.js -m",
+    "build": "tsc && ncc build lib/index.mjs -m",
     "lint": "eslint --max-warnings=0 ."
   },
   "repository": {
@@ -19,8 +19,8 @@
   },
   "homepage": "https://github.com/dlemstra/github-actions-debugger#readme",
   "dependencies": {
-    "@actions/core": "2.0.3",
-    "@actions/exec": "2.0.0"
+    "@actions/core": "3.0.0",
+    "@actions/exec": "3.0.0"
   },
   "devDependencies": {
     "@types/node": "25.5.0",
