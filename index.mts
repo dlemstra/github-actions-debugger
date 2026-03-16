@@ -147,7 +147,7 @@ async function findRunnerCodespace() {
         return '';
     }
 
-    const codespaces = <ICodespace[]>JSON.parse(commandResult.output);
+    const codespaces = JSON.parse(commandResult.output) as ICodespace[];
     if (codespaces.length === 0)
         return '';
 
