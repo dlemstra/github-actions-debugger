@@ -10,6 +10,7 @@ permissions:
 name: main
 jobs:
   run_action:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
