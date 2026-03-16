@@ -1,31 +1,41 @@
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
+import { defineConfig } from "eslint/config";
+import pluginLicenseHeader from "eslint-plugin-license-header";
+import pluginTypescriptEslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
+export default defineConfig([{
+    files: [
+        "**/*.ts"
+    ],
 
-export default [{
     ignores: [
         "**/dist",
-        "**/lib",
+        "lib/*",
     ],
-}, ...compat.extends(
-    "plugin:@typescript-eslint/recommended"
-), {
+
     plugins: {
-        "@typescript-eslint": typescriptEslint,
+        "@eslint-plugin-license-header": pluginLicenseHeader,
+        "@typescript-eslint": pluginTypescriptEslint,
     },
+
+    extends: [
+        "@typescript-eslint/eslint-recommended",
+        "@typescript-eslint/recommended",
+    ],
 
     languageOptions: {
         parser: tsParser,
     },
-}];
+
+    rules: {
+        "@eslint-plugin-license-header/header": [
+            "error",
+            [
+                "/*",
+                "  Copyright Dirk Lemstra https://github.com/dlemstra/github-actions-debugger.",
+                "  Licensed under the Apache License, Version 2.0.",
+                "*/",
+            ]
+        ]
+    }
+}]);

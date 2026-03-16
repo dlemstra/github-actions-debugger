@@ -1,3 +1,8 @@
+/*
+  Copyright Dirk Lemstra https://github.com/dlemstra/github-actions-debugger.
+  Licensed under the Apache License, Version 2.0.
+*/
+
 import * as fs from 'fs/promises';
 import * as os from 'os';
 import * as process from 'process';
