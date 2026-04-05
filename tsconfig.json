@@ -3,6 +3,7 @@
     "target": "es2018",
     "module": "nodenext",
     "moduleResolution": "nodenext",
+    "types": ["node"],
     "outDir": "lib",
     "declaration": true,
     "removeComments": true,
