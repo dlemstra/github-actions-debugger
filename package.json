@@ -19,15 +19,15 @@
   },
   "homepage": "https://github.com/dlemstra/github-actions-debugger#readme",
   "dependencies": {
-    "@actions/core": "3.0.0",
+    "@actions/core": "3.0.1",
     "@actions/exec": "3.0.0"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
-    "@typescript-eslint/eslint-plugin": "8.58.2",
-    "@typescript-eslint/parser": "8.58.2",
+    "@typescript-eslint/eslint-plugin": "8.59.1",
+    "@typescript-eslint/parser": "8.59.1",
     "@vercel/ncc": "0.38.4",
-    "eslint": "10.2.0",
+    "eslint": "10.3.0",
     "eslint-plugin-license-header": "0.9.0",
     "typescript": "6.0.3"
   }
