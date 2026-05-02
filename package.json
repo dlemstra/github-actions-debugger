@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/dlemstra/github-actions-debugger#readme",
   "dependencies": {
-    "@actions/core": "3.0.0",
+    "@actions/core": "3.0.1",
     "@actions/exec": "3.0.0"
   },
   "devDependencies": {
