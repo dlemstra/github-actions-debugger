@@ -21,6 +21,7 @@ class ProgramResult {
 
 interface ICodespace {
     name: string;
+    repository: string;
 }
 
 async function executeCommand(command: string, args: string[]) {
@@ -141,20 +142,21 @@ async function createRunnerShellScript(platform: NodeJS.Platform) {
 }
 
 async function findRunnerCodespace() {
-    const commandResult = await executeCommand('gh', ['cs', 'list', '--json', 'name,repository', '-q', 'map(select(.repository | contains("/runner-codespace")))']);
+    const commandResult = await executeCommand('gh', ['cs', 'list', '--json', 'name,repository']);
     if (commandResult.exitCode !== 0) {
         core.info(`Failed to find codespace:\n${commandResult.error}`);
         return '';
     }
 
     const codespaces = JSON.parse(commandResult.output) as ICodespace[];
-    if (codespaces.length === 0)
+    core.info(`Found ${codespaces.length} codespace(s)`);
+    const codespace = codespaces.find(c => c.repository.includes('/runner-codespace'));
+    if (codespace === undefined)
         return '';
 
-    const firstCodespace = codespaces[0].name;
-    core.info(`Found codespace: ${firstCodespace}`);
+    core.info(`Found codespace: ${codespace.name}`);
 
-    return firstCodespace;
+    return codespace.name;
 }
 
 async function run() {
